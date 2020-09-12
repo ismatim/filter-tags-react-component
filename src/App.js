@@ -1,46 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Reset from './components/Buttons/Reset.js';
 import Filter from './components/Buttons/Filter.js';
 import Question from './components/Question.js';
-import './App.css';
+import fakeData from './data/fake-data.js';
 
-const data = [
-  {
-    title: 'a hard interview question',
-    tags: ['sql', 'probability', 'modelling'],
-    companies: ['facebook', 'linkedin', 'netflix'],
-    positions: ['software engineer', 'Business Analyst', 'Data Scientist']
-  },
-  {
-    title: 'hard question to solve',
-    tags: ['sql', 'probability', 'statistics'],
-    companies: ['facebook', 'linkedin', 'amazon' ],
-    positions: [
-      'software engineer',
-      'marketing Analyst',
-      'Data Scientist',
-      'ML Engineer'
-    ]
-  },
-  {
-    title: 'easy question to solve',
-    tags: ['sql', 'probability', 'statistics'],
-    companies: ['facebook', 'linkedin', 'amazon', 'google'],
-    positions: [
-      'software engineer',
-      'marketing Analyst',
-      'Data Scientist',
-      'ML Engineer'
-    ]
-  }
-];
-
-// TODO: render position and companies with filter
-// <11-09-20, yourname> //
-//
-const coSet = new Set();
-const posSet = new Set();
-const getFiltersButtons = () => {
+const getFiltersButtons = data => (coSet, posSet) => {
   data.forEach(q => {
     q.companies.forEach(c => {
       coSet.add(c);
@@ -52,11 +16,8 @@ const getFiltersButtons = () => {
   return Array.from([...coSet, ...posSet]);
 };
 
-const filters = getFiltersButtons();
-
 const filterQuestionsByTitle = data => question => {
-  if(question.length===0)
-    return data;
+  if (question.length === 0) return data;
 
   let result = data.filter(q => q.title.includes(question));
 
@@ -64,30 +25,30 @@ const filterQuestionsByTitle = data => question => {
 };
 
 const filterQuestionsByCompanies = data => co => {
-  if(co.length===0)
-    return data;
+  if (co.length === 0) return data;
 
   let result = data.filter(q => {
-    let hasCompanies = q.companies.some(cq => co.some(c => c === cq));
+    let hasCompanies = co.every(c => q.companies.some(cq => cq === c));
 
     return hasCompanies;
   });
+
   return result;
 };
 
 const filterQuestionsByPositions = data => pos => {
-  if(pos.length===0)
-    return data;
+  if (pos.length === 0) return data;
 
   let result = data.filter(q => {
-    let hasPositions = q.positions.some(pq => pos.some(p => p === pq));
+    let hasPositions = pos.every(p => q.positions.some(pq => pq === p));
 
-    return hasPositions ;
+    return hasPositions;
   });
+
   return result;
 };
 
-const filterQuestions = (qTitle, co, pos) => {
+const filterQuestions = data => (qTitle, co, pos) => {
   let resultByTitles = filterQuestionsByTitle(data)(qTitle);
   let resultByTitlesAndCompanies = filterQuestionsByCompanies(resultByTitles)(
     Array.from(co)
@@ -96,37 +57,50 @@ const filterQuestions = (qTitle, co, pos) => {
     resultByTitlesAndCompanies
   )(Array.from(pos));
 
-  console.log('resultByTitlesAndCompanies', resultByTitlesAndCompanies);
-  console.log(
-    'resultByTitlesAndCompaniesAndPositions ',
-    resultByTitlesAndCompaniesAndPositions
-  );
-
   return resultByTitlesAndCompaniesAndPositions;
 };
 
 function App() {
-  var searchParams = new URLSearchParams(window.location.href);
+  const [data, setData] = useState();
+  let searchParams = new URLSearchParams(window.location.href);
+  let coSet = new Set();
+  let posSet = new Set();
   let pos = new Set();
   let co = new Set();
   let qTitle = '';
+
   searchParams.forEach(function(value, key) {
-    if (key === 'pos') pos.add(value);
-    if (key === 'co') co.add(value);
+    //multiple options are comma separated
+    if (key === 'pos') {
+      let posSearched = value.split(',');
+      if (posSearched[0] !== '') posSearched.forEach(p => pos.add(p));
+    }
+    if (key === 'co') {
+      let cosSearched = value.split(',');
+      if (cosSearched[0] !== '') cosSearched.forEach(c => co.add(c));
+    }
     if (key === window.location.origin + '/?q') qTitle = value;
   });
 
-  console.log('q', qTitle);
-  console.log('co', co);
-  console.log('pos', pos);
+  useEffect(() => {
+    function getData() {
+      let callServer = Promise.resolve(fakeData);
+      callServer.then(function(data) {
+        setData(data);
+      });
+    }
+    getData();
+  }, []);
 
-  let questions = filterQuestions(qTitle, co, pos);
+  if (!data) return 'loading..';
+
+  let questions = filterQuestions(data)(qTitle, co, pos);
+  let filters = getFiltersButtons(data)(coSet, posSet);
 
   return (
     <article className="App">
-      <section
-        style={{ margin: '4%', display: 'flex', alignItems: 'baseline' }}
-      >
+      <h1 style={{ textAlign: 'left', marginLeft: '4%' }}>Query Questions</h1>
+      <section className="section-filters">
         <div
           style={{
             display: 'flex',
@@ -135,17 +109,23 @@ function App() {
             justifyContent: 'start-between'
           }}
         >
-          {filters.map(f => {
+          {filters.map((f, i) => {
             return (
-              <Filter name={f} param={coSet.has(f) ? 'co' : 'pos'}></Filter>
+              <Filter
+                key={i}
+                paramName={coSet.has(f) ? 'co' : 'pos'}
+                value={f}
+                params={coSet.has(f) ? co : pos}
+                active={co.has(f) || pos.has(f)}
+              ></Filter>
             );
           })}
         </div>
         <Reset></Reset>
       </section>
-      <section>
-        {questions.map(q => {
-          return <Question name={q.title}></Question>;
+      <section className="section-questions">
+        {questions.map((q, i) => {
+          return <Question key={i} name={q.title}></Question>;
         })}
       </section>
     </article>

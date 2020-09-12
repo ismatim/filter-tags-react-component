@@ -1,13 +1,112 @@
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+        'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
+        'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+        monospace;
+}
+
+.section-filters {
+    margin: 4%;
+    display: flex;
+    align-items: baseline;
+    border-top: 1px double dimgrey;
+    flex-flow: column;
+}
+
+.filter {
+    color: #021425;
+    margin: 1rem 1rem;
+    padding: 0.5rem;
+    background-color: #f6bb42;
+    border-radius: 1rem;
+    border-color: transparent;
+    outline: none;
+    font-size: 1.7rem;
+}
+
+.filter-active {
+    color: #434a54;
+    background: #ccd1d9;
+    border: 2px solid black;
+}
+
+.filter:hover {
+    color: black;
+    background-color: #e26d5c;
+    cursor: pointer;
+}
+
+.btn-reset {
+    font-size: 1rem;
+    background-color: #e2e2e2;
+    color: #3b3b3b;
+    border-radius: 1rem;
+    font-size: 2rem;
+    border-color: black;
+    padding: 1rem;
+    margin-top: 1rem;
+    width: 100%;
+    text-align: center;
+}
+.section-questions {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 4%;
+}
+.question {
+    width: auto;
+    margin: 1rem 1rem;
+    border-radius: 1rem;
+    padding: 1rem;
+    border-radius: 5px;
+    background: linear-gradient(-45deg, #ff3e2f, #4fa7df, #ff3e2f, #4fa7df);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+    box-shadow: 5px 5px 1px 1px black;
+}
+.btn-question {
+    border: none;
+    background: none;
+    outline: none;
+    font-size: 2rem;
+    padding:0;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@media all and (min-width: 650px) {
+    .section-filters {
+        flex-flow: row;
+    }
+    .filter {
+        font-size: 1rem;
+    }
+
+    .btn-reset {
+        color: #3b3b3b;
+        border-radius: 1rem;
+        font-size: 1.2rem;
+        border-color: black;
+        padding: 1rem;
+        margin: 0 2rem;
+        width: 6rem;
+        text-align: center;
+    }
 }

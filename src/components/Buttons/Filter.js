@@ -1,17 +1,38 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-function Filter({ name, param }) {
+function Filter({ paramName, value, active, params}) {
+  const clickHandler = e => {
+    e.preventDefault();
+    let newSearchParamsToFilter;
+    let result;
+
+    if (params.has(value)) {
+      newSearchParamsToFilter = [...params]
+        .filter(s => s !== value)
+        .join();
+    } else {
+      newSearchParamsToFilter = [...params, value].join();
+    }
+
+    let newParamsUrl = `${paramName}=${newSearchParamsToFilter.replace(/ /g, '+')}`;
+
+    let newUrl = window.location.href
+      .split('&')
+      .filter(p => !p.includes(`${paramName}=`));
+
+    newUrl.push(newParamsUrl);
+
+    result = newUrl.join('&');
+    window.location = result;
+  };
+
   return (
-    <div
-      style={{
-        margin: '1rem 1rem',
-        padding: '0.5rem',
-        backgroundColor: '#ff7f5094',
-        borderRadius: '1rem'
-      }}
+    <button
+      className={`filter sky ${active ? 'filter-active' : ''}`}
+      onClick={clickHandler}
     >
-      <a href={window.location.href + `&${param}=${name}`}>{name}</a>
-    </div>
+      {value}
+    </button>
   );
 }
 

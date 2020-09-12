@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 function Reset() {
   const clickHandler = () => {
@@ -6,18 +6,10 @@ function Reset() {
   };
 
   return (
-    <input
+    <button
       onClick={clickHandler}
-      style={{
-        padding: '1rem',
-        margin: '0 2rem',
-        width: '6rem',
-        height: '0.5rem',
-        textAlign: 'center',
-        '&:hover': { backgroundColor: 'red;' }
-      }}
-      value="reset"
-    />
+      className="btn-reset"
+    >reset</button>
   );
 }
 
