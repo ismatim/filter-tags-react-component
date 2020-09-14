@@ -71,6 +71,11 @@ code {
     animation: gradient 15s ease infinite;
     box-shadow: 5px 5px 1px 1px black;
 }
+.question:hover {
+
+    filter: brightness(1.5) drop-shadow(2px 4px 6px black);
+}
+
 .btn-question {
     border: none;
     background: none;
